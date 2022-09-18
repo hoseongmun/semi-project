@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+ <mapper namespace="member">
+ 
+ <select id="login" resultType="String">
+  select name 
+  from movie_member 
+  where userid=#{userid} and passwd=#{passwd}   
+ </select>
+
+ <insert id="insert">
+ insert into movie_member 
+ (userid, passwd, name, hp, email) 
+ values(#{userid}, #{passwd}, #{name, jdbcType=VARCHAR}, #{hp, jdbcType=VARCHAR}, #{email, jdbcType=VARCHAR})
+</insert> 
+
+</mapper>

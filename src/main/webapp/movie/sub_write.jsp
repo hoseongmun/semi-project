@@ -1,0 +1,66 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Insert title here</title>
+<%@ include file="../include/header.jsp" %>
+<%@ include file="../include/admin_fun.jsp" %>
+<script>
+function sub_write(){
+	var sub_name=document.form1.sub_name.value; 
+	var price=document.form1.price.value;
+	var description=document.form1.description.value;
+	if(product_name==""){
+		alert("구독상품명을 입력하세요");
+		document.form1.name.focus();
+		return;
+	}
+	if(price==""){
+		alert("가격을 입력하세요");
+		document.form1.price.focus();
+		return;
+	}
+	if(description==""){
+		alert("설명을 입력하세요");
+		document.form1.description.focus();
+		return;
+	}	
+
+	document.form1.action="/jsp02/admin_servlet/insert_sub.do";
+	document.form1.submit();
+}
+</script>
+</head>
+<body>
+<h2>상품등록</h2>
+<form name="form1" method="post" enctype="multipart/form-data">
+<table class="table">
+	<tr>
+		<td>구독상품명</td>
+		<td><input class="input" name="sub_name"></td>
+	</tr>
+	<tr>
+		<td>가격</td>
+		<td><input class="input" name="price"></td>
+	</tr>	
+	<tr>
+		<td>구독상품 설명</td>
+		<td><textarea class="textarea" rows="5" cols="60" name="description"></textarea></td>
+	</tr>
+	<tr>
+		<td>이미지</td>
+		<td><input class="btn btn-sm btn-primary" type="file" name="file1"></td>
+	</tr>	
+	<tr>
+		<td colspan="2" align="center">
+			<input class="btn btn-sm btn-primary" type="button" value="등록" onclick="sub_write()">
+			<input  class="btn btn-sm btn-primary" type="button" value="목록" onclick="location.href='/jsp02/sub_servlet/list.do'">
+		</td>
+	</tr>
+</table>
+</form>
+</body>
+</html>

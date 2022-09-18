@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cart">
+ <insert id="insert_cart">
+  insert into cart (cart_id, userid, sub_code, amount) 
+  values (cart_seq.nextval, #{userid}, #{sub_code}, #{amount} ) 
+ </insert>
+
+ <select id="list_cart" resultType="movie.dto.MovieCartDTO">
+  select c.cart_id, s.sub_code, c.sub_name, c.price, c.amount, c.price*c.amount AS money 
+  from movie_member m, cart c, movie_sub s
+  where m.userid=c.userid and c.sub_code = s.sub_code and c.userid=#{userid} 
+  order by c.sub_name 
+ </select>
+
+ <delete id="delete_cart">
+  delete from cart 
+  where cart_id=#{cart_id} 
+ </delete>
+
+ <update id="update_cart">
+  update cart set amount=#{amount} 
+  where cart_id=#{cart_id} 
+ </update>
+
+ <delete id="clear_cart">
+  delete from cart 
+  where userid=#{userid} 
+ </delete>
+
+ <select id="sub_money" resultType="movie.dto.MovieCartDTO">
+  select c.sub_name, sum(c.price*c.amount) AS money 
+  from cart c, movie_sub s 
+  where c.sub_code=s.sub_code 
+  group by c.sub_name 
+  order by c.sub_name 
+ </select>
+
+ <select id="sum_money" resultType="int">
+  select nvl(sum(c.price*c.amount),0) AS money 
+  from cart c, movie_sub s 
+  where c.sub_code = s.sub_code and c.userid=#{userid}
+ </select>
+
+</mapper>

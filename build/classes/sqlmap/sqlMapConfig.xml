@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+ <configuration>
+  <!-- 알리아스 설정 -->
+  <typeAliases>
+   <typeAlias type="page.EmpDTO" alias="e" />
+  </typeAliases>
+  
+  <environments default="">
+   <environment id="">
+    <transactionManager type="JDBC" />
+    <dataSource type="JNDI">
+     <property name="data_source" 
+      value="java:comp/env/oraDB" />
+    </dataSource>
+   </environment>
+  </environments>
+  <!-- 주의 : 실제 sql query가 있는 매퍼파일은 반드시 등록해야한다. -->
+  <mappers>
+   <mapper resource="/memo/mapper/memo.xml" />
+   <mapper resource="/guestbook/mapper/guestbook.xml"/>
+   <mapper resource="/page/mapper/emp.xml"/>
+   <mapper resource="/board/mapper/board.xml"/>
+   <mapper resource="/movie/mapper/admin.xml" />  
+   <mapper resource="/movie/mapper/cart.xml" />      
+   <mapper resource="/movie/mapper/member.xml" />    
+   <mapper resource="/movie/mapper/movie.xml" />
+   <mapper resource="/movie/mapper/sub.xml" />      
+  </mappers>
+  
+ </configuration>
+ 
+ 

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+ <mapper namespace="movie">
+  <select id="list" resultType="movie.dto.MovieDTO">
+select * 
+from (
+ select A.*, rownum as rn 
+ from (
+	 select num,writer,subject,reg_date,readcount
+	 ,filename,filesize,down,re_level
+	 ,(select count(*) from movie_comment 
+	 where board_num=num) comment_count, show
+	 from movie 
+	 order by ref desc, re_step asc) A ) 
+	 where rn between #{start} and #{end}
+  </select>
+  
+  <!-- 게시물 저장 -->
+ <insert id="insert">
+ insert into movie 
+ (num,writer,subject,passwd,ref,re_step,re_level,content,ip,filename,filesize) 
+  values( (select nvl(max(num)+1,1) from movie ),#{writer},#{subject},#{passwd}, 
+  (select nvl(max(num)+1,1) from movie),1,0,#{content},#{ip},#{filename},#{filesize})
+ </insert>
+  
+ <select id="getFileName" resultType="String">
+  select filename 
+  from board 
+  where num=#{num}
+ </select>
+  
+ <update id="plusDown">
+  update movie 
+  set down=down+1 
+  where num=#{num}
+ </update>
+  
+ <select id="view" resultType="movie.dto.MovieDTO">
+   select * from movie 
+   where num=#{num}
+ </select>
+  
+  <!-- 조회수 증가처리 -->
+ <update id="plusReadCount">
+  update movie set readcount=readcount+1 
+  where num=#{num}
+ </update>
+  
+  <!-- 댓글 목록 보기 -->
+  <select id="commentList" resultType="movie.dto.MovieCommentDTO">
+   select * from movie_comment 
+   where board_num=#{num} 
+  </select>
+  
+  <!-- 댓글 쓰기 기능 -->
+  <insert id="commentAdd">
+    insert into movie_comment (comment_num,board_num,writer,content) 
+    values((select nvl(max(comment_num)+1,1) from movie_comment), #{board_num}, #{writer}, #{content})  
+  </insert>
+  
+ <!-- 답글 순서 조정 -->
+ <update id="updateStep">
+  update movie 
+  set re_step=re_step+1
+   where ref=#{ref} and re_step >= #{re_step}  
+ </update>
+ 
+ <!-- 답글 쓰기 기능 -->
+ <insert id="reply">
+  insert into movie ( num,writer,subject,passwd,ref,re_step,re_level,content,ip,filename,filesize ) 
+  values( (select nvl(max(num)+1,1) from movie),#{writer},#{subject},#{passwd}, #{ref}, #{re_step}, #{re_level}, #{content}, #{ip}, #{filename}, #{filesize} ) 
+ </insert>
+  
+  
+<!-- 비밀번호 체크 -->
+ <select resultType="String" id="pass_check">
+select passwd from movie 
+where num=#{num} and passwd=#{passwd}
+ </select>
+
+
+<!-- 게시물 수정 -->
+ <update id="update">
+update movie set writer=#{writer}, subject=#{subject},content=#{content},filename=#{filename}, filesize=#{filesize}, down=#{down} 
+ where num=#{num}
+ </update>
+
+<!-- 게시물 삭제(진짜 삭제가 아닌 안보이게 처리) -->
+ <update id="delete">
+  update movie 
+  set show='n' 
+  where num=#{num} 
+ </update>
+
+<!-- 검색기능, 마이바티스도 choose when문 있음 -->
+<!-- #은 값에 '' 을 쓸 때 $는 '' 표 없이 쓸 때-->
+ <select id="searchList" resultType="movie.dto.MovieDTO">
+  select num,writer,subject,reg_date,readcount,filename,filesize,down,ip,re_level, ( select count(*) from movie_comment where board_num=num) comment_count, show 
+  from movie 
+   <choose>
+    <when test="search_option != 'all'">
+     where ${search_option} like #{keyword}
+     and show='y'
+    </when>
+    <otherwise>
+     where (writer like #{keyword} 
+     or subject like #{keyword} 
+     or content like #{keyword})
+     and show ='y'
+    </otherwise>
+   </choose>
+   order by ref desc, re_step
+ </select>
+
+<!-- 게시물 개수 계산 -->
+ <select id="count" resultType="int">
+  select count(*) 
+  from movie
+ </select>
+
+ </mapper>

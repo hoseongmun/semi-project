@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+ <mapper namespace="sub">
+  <select id="file_info" resultType="String">
+   select filename 
+   from movie_sub 
+   where sub_code=#{sub_code} 
+  </select>
+
+  <select id="sub_list" resultType="movie.dto.MovieSubDTO">
+   select * 
+   from movie_sub 
+  </select>
+
+  <select id="detail_sub" resultType="movie.dto.MovieSubDTO">
+   select * 
+   from movie_sub 
+   where sub_code=#{sub_code} 
+  </select>
+
+  <insert id="insert_sub">
+   insert into movie_sub (sub_code, sub_name, price, description, filename) 
+   values (sub_seq.nextval, #{sub_name}, #{price}, #{description},#{filename} )
+  </insert>
+
+  <update id="update_sub">
+   update movie_sub 
+   set sub_name=#{sub_name}, price=#{price}, description=#{description}, filename=#{filename} 
+   where sub_code=#{sub_code} 
+  </update>
+
+  <delete id="delete_sub">
+   delete from movie_sub 
+   where sub_code=#{sub_code} 
+  </delete>
+ 
+ </mapper>
+ 
